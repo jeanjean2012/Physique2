@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Physique · Archimède</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Archimède">
+<meta name="theme-color" content="#14213d">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#eef1f6;--card:#fff;--tx:#14213d;--mut:#5d6785;--bd:#d5dbe8;--ok:#188a4c;--ko:#d23b3b;--gold:#f5b800;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1526;--card:#1a2238;--tx:#eef1f8;--mut:#9aa5c4;--bd:#2c3654}}
+:root[data-theme="dark"]{--bg:#0f1526;--card:#1a2238;--tx:#eef1f8;--mut:#9aa5c4;--bd:#2c3654}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:500 16px/1.4 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:42px;line-height:1;margin:8px 0 4px;font-weight:800;letter-spacing:-1.5px}
+h2{margin:0;font-weight:800}
+.sub{color:var(--mut);margin:0 0 18px}
+.wave{height:12px;margin-bottom:10px;border-radius:6px;background:linear-gradient(90deg,#2f6fdb,#1a9aa0)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--c);color:#fff;border-radius:22px 22px 22px 6px;padding:14px;display:flex;flex-direction:column;gap:6px;min-height:170px}
+.tile .ic{font-size:38px;line-height:1}
+.tile b{font-size:18px;font-weight:800}
+.tile small{opacity:.9;min-height:18px}
+.tile .bt{display:flex;gap:6px;margin-top:auto}
+button{font:inherit;cursor:pointer;border:0}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.tile button{flex:1;background:rgba(255,255,255,.95);color:#14213d;border-radius:12px;padding:8px 4px;font-weight:700;font-size:14px}
+.final{grid-column:1/-1;background:#14213d;border:3px solid var(--gold);flex-direction:row;align-items:center;min-height:0;border-radius:6px 22px 22px 22px;gap:14px}
+.final .bt{margin:0}.final button{background:var(--gold);flex:none;padding:10px 16px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.b2{background:var(--card);color:var(--tx);border:2px solid var(--bd);border-radius:12px;padding:8px 12px;font-weight:700}
+.bar{flex:1;height:10px;background:var(--bd);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--c,#3b82f6);transition:width .3s}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:20px;padding:18px;margin-bottom:12px}
+.card small{color:var(--mut)}.p{margin:6px 0}.card h2{font-size:26px;overflow-wrap:anywhere}
+.card h2.lg{font-size:19px;line-height:1.35}
+.opts{display:grid;gap:10px}
+.o{background:var(--card);color:var(--tx);border:2px solid var(--bd);border-radius:14px;padding:14px;text-align:left;font-weight:700;font-size:16px}
+.o.ok{background:var(--ok);border-color:var(--ok);color:#fff}.o.ko{background:var(--ko);border-color:var(--ko);color:#fff}
+.nx{width:100%;margin-top:14px;background:var(--tx);color:var(--bg);border-radius:14px;padding:14px;font-weight:800;font-size:17px}
+.row{background:var(--card);border:2px solid var(--bd);border-radius:14px;padding:11px 14px;margin-bottom:8px}
+.row b{font-size:17px}.fr{display:block;margin-top:4px;color:var(--mut);transition:filter .2s}
+.hide .fr{filter:blur(7px)}.hide .row.on .fr{filter:none}
+.tip{background:var(--gold);color:#14213d;border-radius:14px;padding:12px 14px;margin:0 0 12px;font-weight:600}
+.big{font-size:64px;font-weight:800;line-height:1;margin:10px 0}
+.center{text-align:center}
+.w{color:var(--mut);font-size:15px;margin:6px 0}.w b{color:var(--ok)}
+svg{display:block;margin:0 auto;max-width:260px;width:100%}
+</style></head><body><div id="app"></div>
+<script>
+const FA='F<sub>A</sub>';
+const SVG=`<div class=card><svg viewBox="0 0 220 156" role="img" aria-label="Forces sur un objet immergé"><rect x="10" y="50" width="200" height="100" rx="8" fill="#9cc9f2" opacity=".6"/><rect x="85" y="75" width="50" height="40" rx="4" fill="#8a6a4a"/><line x1="110" y1="75" x2="110" y2="52" stroke="#2f6fdb" stroke-width="4"/><polygon points="104,58 110,44 116,58" fill="#2f6fdb"/><line x1="110" y1="115" x2="110" y2="140" stroke="#c2268a" stroke-width="4"/><polygon points="104,134 110,150 116,134" fill="#c2268a"/><text x="124" y="64" font-size="15" font-weight="700" fill="#2f6fdb">F_A (haut)</text><text x="124" y="140" font-size="15" font-weight="700" fill="#c2268a">P (bas)</text></svg></div>`;
+const T=[
+{id:'flu',ic:'💧',n:'Le fluide',c:'#2f6fdb',tip:'Un fluide prend la forme de son récipient : c’est un liquide ou un gaz.',i:[['Fluide','Substance qui prend facilement la forme de son récipient'],['Liquide','Fluide dont le volume ne varie pas sous une pression extérieure'],['Gaz','Fluide dont le volume varie sous une pression extérieure'],['Seringue remplie d’eau','On ne peut pas la comprimer : c’est un liquide'],['Seringue remplie d’air','On peut la comprimer : c’est un gaz']]},
+{id:'res',ic:'➕',n:'Résultante de forces',c:'#e0672a',tip:'La résultante R remplace toutes les forces sur un même corps. On la dessine en vert.',i:[['Résultante des forces','Force unique qui remplace plusieurs forces agissant sur un même corps'],['Couleur de la résultante','Toujours en vert'],['Forces alignées de même sens','Intensité de R = somme des intensités'],['Forces alignées de sens opposés','Intensité de R = soustraction des intensités'],['Sens de R (sens opposés)','Celui de la plus grande force']]},
+{id:'arc',ic:'⛵',n:'Poussée d’Archimède',c:'#1a9aa0',svg:1,tip:'Le poids ne change pas dans l’eau : une nouvelle force apparaît vers le haut.',i:[['Poussée d’Archimède','Force verticale, vers le haut, exercée par un fluide sur un objet immergé'],['Principe d’Archimède','Tout corps plongé dans un fluide subit une force verticale de bas en haut égale au poids du fluide déplacé'],['Poids dans l’eau','Il ne change pas : le poids d’un objet est le même dans l’air et dans l’eau'],['Poids apparent','Poids dans l’air − '+FA+' (c’est la résultante)'],['Volume d’eau débordé','Égal au volume de l’objet immergé (volume déplacé)'],['Pourquoi un bateau flotte','La poussée d’Archimède compense son poids, pas parce que « l’eau est forte »'],['Direction de la poussée','Verticale, vers le haut']]},
+{id:'for',ic:'🧮',n:'La formule',c:'#8e44ad',tip:'Les 4 formules à connaître : poussée, poids apparent, poids et masse volumique.',i:[['Formule de la poussée',FA+' = ρ<sub>fluide</sub> × g × V<sub>immergé</sub>'],[FA,'Poussée d’Archimède, en newtons (N)'],['ρ<sub>fluide</sub>','Masse volumique du fluide, en kg/m³'],['g','Constante de gravité, en N/kg'],['V<sub>immergé</sub>','Volume immergé de l’objet, en m³'],['Formule du poids apparent','P’ = P − '+FA+' (P’ : poids apparent, P : poids dans l’air)'],['Formule du poids','P = m × g (P en N, m en kg, g en N/kg)'],['Formule de la masse volumique','ρ = m / V (ρ en kg/m³, m en kg, V en m³)'],['Facteurs qui influencent '+FA,'La nature du fluide (ρ), le volume immergé et la gravité'],['Ne change pas '+FA,'La forme du récipient']]},
+{id:'mv',ic:'⚖️',n:'Masse volumique',c:'#d4508a',tip:'ρ = m / V. Ne mélange pas m³, dm³ et L !',i:[['Masse volumique','Masse d’un corps par unité de volume'],['Formule de ρ','ρ = m / V'],['Masse en fonction de ρ','m = ρ × V'],['Unité SI de ρ','kg/m³'],['1 kg/m³','= 1 g/dm³ = 1 g/L'],['1 m³','= 1000 dm³ = 1000 L'],['1 dm³','= 1 L = 1000 mL'],['Liège dans l’eau','ρ liège < ρ eau : il flotte'],['Acier dans l’eau','ρ acier > ρ eau : il coule'],['Huile et eau','ρ huile < ρ eau : l’huile flotte sur l’eau']]},
+{id:'pb',ic:'🧪',n:'Problèmes',c:'#188a4c',gen:1,tip:'Prends g = 10 N/kg, sauf si l’énoncé donne autre chose. Les quiz génèrent de nouveaux chiffres à chaque fois.',i:[['1. Écris la formule',FA+' = ρ × g × V'],['2. Convertis le volume en m³','1 dm³ = 1 L = 0,001 m³'],['3. Remplace et calcule',FA+' = 1000 × 10 × 0,002 = 20 N'],['Poids apparent','P apparent = P dans l’air − '+FA],['Exemple du labo','P = 2 N ; P apparent = 1,2 N ; donc '+FA+' = 0,8 N'],['Masse volumique','ρ = m / V (en kg/m³)'],['Résultante','Même sens : on additionne. Sens opposés : on soustrait.']]}
+];
+const $=s=>document.querySelector(s),A=$('#app');
+const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.random()*a.length|0];
+const nf=x=>String(+(+x).toFixed(4)).replace('.',',');
+let best={};try{best=JSON.parse(localStorage.getItem('ph_best')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('ph_best',JSON.stringify(best))}catch(e){}};
+const bs=k=>best[k]?`★ Meilleur : ${best[k]}%`:'Pas encore joué';
+
+const opts=(a,w)=>{const s=[];[...w,a*2,a+1,a/2,a*3].forEach(x=>{x=+(+x).toFixed(4);if(x!=a&&x>0&&!s.includes(x))s.push(x)});return sh([a,...s.slice(0,3)])};
+const gq=(s,a,w,u)=>({p:'Problème 🧪',s,a:nf(a)+' '+u,o:opts(a,w).map(x=>nf(x)+' '+u),lg:1});
+const G=[
+()=>{const [f,r]=pick([['eau',1000],['eau salée',1030],['huile',800],['alcool',790]]),V=pick([1,2,3,5,0.5]),a=r*10*V/1000;
+return gq(`Un objet de ${nf(V)} dm³ est totalement immergé dans de l’${f} (ρ = ${r} kg/m³, g = 10 N/kg). Quelle est la poussée d’Archimède ?`,a,[a*1000,a*10,a/10],'N')},
+()=>{const P=pick([2,3,4,5,6,8]),F=pick([0.4,0.5,0.8,1,1.5,2].filter(x=>x<P));
+return gq(`Un objet pèse ${P} N dans l’air. Plongé dans l’eau, il subit une poussée d’Archimède de ${nf(F)} N. Quel est son poids apparent ?`,P-F,[P+F,F,P],'N')},
+()=>{const r=pick([800,1000,2700,7800]),V=pick([0.5,1,2,0.1]),m=r*V;
+return gq(`Un bloc de ${nf(m)} kg a un volume de ${nf(V)} m³. Quelle est sa masse volumique ?`,r,[r*10,r/10,m],'kg/m³')},
+()=>{const [a,b]=sh([10,15,20,30,45]).slice(0,2),same=Math.random()<.5,r=same?a+b:Math.abs(a-b),o=same?Math.abs(a-b):a+b;
+return gq(`Deux forces de ${a} N et ${b} N sont alignées ${same?'de même sens':'de sens opposés'}. Quelle est l’intensité de la résultante ?`,r,[o,Math.max(a,b),Math.min(a,b)],'N')},
+()=>{const m=pick([0.2,0.5,1,2,5]),a=m*10;
+return gq(`Quel est le poids d’un objet de ${nf(m)} kg (g = 10 N/kg) ?`,a,[m,a*10,a/10],'N')}
+];
+const mkP=n=>Array.from({length:n},()=>pick(G)());
+function mk(pool,n){return sh(pool).slice(0,n).map(({t,it})=>{const d=Math.random()<.5?1:0,a=it[d?0:1];
+const o=sh([a,...sh(t.i.filter(x=>x[d?0:1]!==a)).slice(0,3).map(x=>x[d?0:1])]);
+const s=it[d];return{p:d?'Quel est le terme correspondant ?':'Quelle est la bonne réponse pour :',s,a,o,lg:s.replace(/<[^>]+>/g,'').length>40}})}
+const build=id=>{if(id=='final'){const p=T.filter(t=>!t.gen).flatMap(t=>t.i.map(it=>({t,it})));return sh([...mk(p,18),...mkP(7)])}
+const t=T.find(x=>x.id==id);return t.gen?mkP(8):mk(t.i.map(it=>({t,it})),10)};
+
+function home(){
+A.innerHTML=`<div class=wave></div><h1>Physique<br>Archimède</h1><p class=sub>Chapitre 2 : révise, teste-toi, puis passe le test final.</p><div class=grid>`+
+T.map(t=>`<div class=tile style="--c:${t.c}"><span class=ic>${t.ic}</span><b>${t.n}</b><small>${bs(t.id)}</small><div class=bt><button data-s=${t.id}>📖 Réviser</button><button data-q=${t.id}>🎯 Quiz</button></div></div>`).join('')+
+`<div class="tile final"><span class=ic>🏆</span><div><b>Test final</b><br><small>25 questions mixtes · ${bs('final')}</small></div><div class=bt style="margin-left:auto"><button data-f=1>Lancer</button></div></div></div>`;
+A.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>study(b.dataset.s));
+A.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{const t=T.find(x=>x.id==b.dataset.q);quiz(t.id,t.ic+' '+t.n,t.c)});
+A.querySelector('[data-f]').onclick=()=>quiz('final','🏆 Test final','#14213d');
+scrollTo(0,0)}
+
+function study(id){const t=T.find(x=>x.id==id);
+A.innerHTML=`<div class=top><button class=b2 id=bk>← Retour</button><button class=b2 id=tg>👁 Cacher les réponses</button></div><h2>${t.ic} ${t.n}</h2><p class=tip>💡 ${t.tip}</p>${t.svg?SVG:''}<div id=ls>`+
+t.i.map(x=>`<div class=row><b>${x[0]}</b><span class=fr>${x[1]}</span></div>`).join('')+`</div><button class=nx id=go style="background:${t.c};color:#fff">🎯 Passer au quiz</button>`;
+$('#bk').onclick=home;$('#go').onclick=()=>quiz(t.id,t.ic+' '+t.n,t.c);
+$('#tg').onclick=()=>$('#ls').classList.toggle('hide');
+A.querySelectorAll('.row').forEach(r=>r.onclick=()=>r.classList.toggle('on'));scrollTo(0,0)}
+
+function quiz(key,title,col){const qs=build(key);let i=0,s=0,w=[];
+const show=()=>{const q=qs[i];
+A.innerHTML=`<div class=top style="--c:${col}"><button class=b2 id=x>✕</button><div class=bar><i style="width:${i/qs.length*100}%"></i></div><b>${i+1}/${qs.length}</b></div><div class=card><small>${title}</small><p class=p>${q.p}</p><h2 class="${q.lg?'lg':''}">${q.s}</h2></div><div class=opts>${q.o.map((o,k)=>`<button class=o data-i=${k}>${o}</button>`).join('')}</div><div id=nx></div>`;
+$('#x').onclick=home;let done=0;const ci=q.o.indexOf(q.a),bt=A.querySelectorAll('.o');
+bt.forEach(b=>b.onclick=()=>{if(done)return;done=1;
+bt[ci].classList.add('ok');
+if(+b.dataset.i===ci)s++;else{b.classList.add('ko');w.push(q)}
+$('#nx').innerHTML=`<button class=nx>${i<qs.length-1?'Suivant →':'Voir le résultat'}</button>`;
+$('#nx button').onclick=()=>{i++;i<qs.length?show():end()}})};
+const end=()=>{const p=Math.round(s/qs.length*100);if(p>(best[key]||0)){best[key]=p;save()}
+const m=p>=90?['🏆','Excellent !']:p>=70?['🎉','Très bien !']:p>=50?['👍','Pas mal, continue !']:['💪','Retourne réviser, tu vas y arriver !'];
+A.innerHTML=`<div class="card center"><small>${title}</small><div class=big>${m[0]}</div><h2>${s}/${qs.length} · ${p}%</h2><p>${m[1]}</p></div>`+
+(w.length?`<div class=card><b>À revoir</b>${w.map(q=>`<p class=w>${q.s} → <b>${q.a}</b></p>`).join('')}</div>`:'')+
+`<button class=nx id=re>🔁 Rejouer</button><button class="nx b2" id=hm style="margin-top:10px">Accueil</button>`;
+$('#re').onclick=()=>quiz(key,title,col);$('#hm').onclick=home;scrollTo(0,0)};
+show();scrollTo(0,0)}
+home();
+</script></body></html>
